@@ -1,3 +1,4 @@
+import { useQuery } from 'convex/react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef } from 'react';
 import {
@@ -8,13 +9,14 @@ import {
   Text,
   View
 } from 'react-native';
+import { api } from '../../convex/_generated/api';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const GRID_PAD = 16;
 const GRID_GAP = 4;
 const NUM_COLS = 3;
 const TILE_WIDTH = (SCREEN_WIDTH - GRID_PAD * 2 - GRID_GAP * (NUM_COLS - 1)) / NUM_COLS;
-const TILE_HEIGHT = TILE_WIDTH * (16 / 9);
+const TILE_HEIGHT = TILE_WIDTH / 0.8;
 const HEADER_HEIGHT = SCREEN_WIDTH; // aspectRatio 1:1
 
 const DARK = {
@@ -27,6 +29,7 @@ const DARK = {
 
 export default function ProfileScreen() {
   const scrollY = useRef(new Animated.Value(0)).current;
+  const user = useQuery(api.users.getProfileByUsername, { username: 'olifmov' });
 
   const visibleHeaderHeight = HEADER_HEIGHT - 60;
 
@@ -52,7 +55,7 @@ export default function ProfileScreen() {
         ]}
       >
         <Animated.Image
-          source={{ uri: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80' }}
+          source={{ uri: user?.avatarUrl ?? 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80' }}
           style={[
             styles.picture,
             { transform: [{ scale: imageScale }] },
@@ -63,8 +66,8 @@ export default function ProfileScreen() {
           style={styles.fadeOverlay}
         />
         <View style={styles.textBlock}>
-          <Text style={styles.greeting}>oli</Text>
-          <Text style={styles.handle}>@olifmov</Text>
+          <Text style={styles.greeting}>{user?.displayName ?? 'oli'}</Text>
+          <Text style={styles.handle}>@{user?.username ?? 'olifmov'}</Text>
         </View>
       </Animated.View>
       <Animated.ScrollView
@@ -78,11 +81,11 @@ export default function ProfileScreen() {
         )}
       >
         <View style={styles.stats}>
-          <Text style={[styles.stat, { color: DARK.text }]}>8 following</Text>
+          <Text style={[styles.stat, { color: DARK.text }]}>{user?.followingCount ?? 0} following</Text>
           <Text style={[styles.stat, { color: DARK.text }]}>•</Text>
-          <Text style={[styles.stat, { color: DARK.text }]}>22 followers</Text>
+          <Text style={[styles.stat, { color: DARK.text }]}>{user?.followersCount ?? 0} followers</Text>
           <Text style={[styles.stat, { color: DARK.text }]}>•</Text>
-          <Text style={[styles.stat, { color: DARK.text }]}>310kg </Text>
+          <Text style={[styles.stat, { color: DARK.text }]}>{user?.totalKg ?? 0}kg</Text>
         </View>
         <View style={styles.actions}>
           <Pressable style={[styles.actionButton, { backgroundColor: DARK.surface }]}>

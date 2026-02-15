@@ -8,9 +8,6 @@ export default defineSchema({
     username: v.string(),
     bio: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
-    benchMax: v.optional(v.string()),
-    squatMax: v.optional(v.string()),
-    deadliftMax: v.optional(v.string()),
     currentStreak: v.number(),
   })
     .index("by_clerkId", ["clerkId"])
@@ -19,11 +16,17 @@ export default defineSchema({
   workouts: defineTable({
     userId: v.id("users"),
     name: v.string(),
-    duration: v.number(),
-    notes: v.optional(v.string()),
+    type: v.string(),
+    location: v.optional(v.string()),
+    photoUrl: v.optional(v.string()),
     mediaUrl: v.optional(v.string()),
-    isPublic: v.boolean(),
+    notes: v.optional(v.string()),
+    rating: v.optional(v.number()),
+    bodyWeight: v.optional(v.number()),
+    caloriesBurned: v.optional(v.number()),
+    startedAt: v.number(),
     completedAt: v.number(),
+    isPublic: v.boolean(),
   })
     .index("by_user", ["userId"])
     .index("by_completedAt", ["completedAt"]),
@@ -35,10 +38,36 @@ export default defineSchema({
       v.object({
         reps: v.number(),
         weight: v.number(),
+        type: v.string(),
+        rpe: v.optional(v.number()),
+        restSeconds: v.optional(v.number()),
       })
     ),
     order: v.number(),
   }).index("by_workout", ["workoutId"]),
+
+  splits: defineTable({
+    userId: v.id("users"),
+    name: v.string(),
+    type: v.string(),
+    cycleLengthDays: v.number(),
+    isActive: v.boolean(),
+    startedAt: v.number(),
+    endedAt: v.optional(v.number()),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_active", ["userId", "isActive"]),
+
+  personalRecords: defineTable({
+    userId: v.id("users"),
+    exercise: v.string(),
+    weight: v.number(),
+    achievedAt: v.number(),
+    workoutId: v.optional(v.id("workouts")),
+    notes: v.optional(v.string()),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_exercise", ["userId", "exercise"]),
 
   friendships: defineTable({
     requesterId: v.id("users"),

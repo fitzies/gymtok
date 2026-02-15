@@ -1,0 +1,20 @@
+---
+description: Icon usage guidelines for the project
+globs: **/*.tsx
+---
+
+# Icons
+
+- Use **Hugeicons** for all icons in the app.
+- Import the component from `@hugeicons/react-native` and icons from `@hugeicons/core-free-icons`.
+- Do NOT use `@expo/vector-icons` (Ionicons, Feather, etc.).
+- The only exception is SF Symbols (`Icon sf="..."`) inside `NativeTabs` in `app/(tabs)/_layout.tsx`.
+
+## Usage
+
+```tsx
+import { HugeiconsIcon } from '@hugeicons/react-native';
+import { Search01Icon } from '@hugeicons/core-free-icons';
+
+<HugeiconsIcon icon={Search01Icon} size={24} color="#fff" />
+```
